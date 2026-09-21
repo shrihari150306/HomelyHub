@@ -25,6 +25,14 @@ app.use(cors({
     credentials: true,
 }))
 const PORT = process.env.PORT;
+
+
+app.use(cors({
+  origin: 'https://homeleyhub.netlify.app', // Make sure there is NO slash '/' at the end!
+  credentials: true
+}));
+
+
 //one test route
 app.get("/", (req, res) => {
     res.send("HomelyHub Backend is running");
