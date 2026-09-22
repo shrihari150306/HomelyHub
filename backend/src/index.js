@@ -28,7 +28,7 @@ const PORT = process.env.PORT;
 
 
 app.use(cors({
-  origin: "https://homelyhub.netlify.app", // Make sure there is NO slash '/' at the end!
+  origin: "https://homeleyhub.netlify.app", // Make sure there is NO slash '/' at the end!
   credentials: true
 }));
 
