@@ -6,58 +6,71 @@ export const getSignup = (user) => async(dispatch)=>{
     try{
         dispatch(userActions.getSignupRequest());
         const {data} = await axiosInstance.post("/v1/rent/user/signup", user);
+        
+        // Save token to localStorage
+        if (data.token) {
+            localStorage.setItem("token", data.token);
+        }
+
         dispatch(userActions.getSignupDetails(data.user))
     }catch(error){
-     dispatch(userActions.getError(error.response.data.message))
+        dispatch(userActions.getError(error.response.data.message))
     }
 }
 
 //login
-export const getLogin=(user) => async(dispatch) =>{
+export const getLogin=(user) => async(dispatch) => {
     try{
-    dispatch(userActions.getLoginRequest());
-    const {data} = await axiosInstance.post("/v1/rent/user/login", user);
-    dispatch(userActions.getLoginDetails(data.user))
+        dispatch(userActions.getLoginRequest());
+        const {data} = await axiosInstance.post("/v1/rent/user/login", user);
+
+        // Save token to localStorage
+        if (data.token) {
+            localStorage.setItem("token", data.token);
+        }
+
+        dispatch(userActions.getLoginDetails(data.user))
     }catch(error){
-      dispatch(userActions.getError(error.response.data.message))
+        dispatch(userActions.getError(error.response.data.message))
     }
 }
 
 export const currentUser =() => async(dispatch) =>{
     try{
-     dispatch(userActions.getCurrentRequest());
-     const {data} = await axiosInstance.get("/v1/rent/user/me");
-     dispatch(userActions.getCurrentUser(data.user))
+        dispatch(userActions.getCurrentRequest());
+        const {data} = await axiosInstance.get("/v1/rent/user/me");
+        dispatch(userActions.getCurrentUser(data.user))
     }catch{
+        localStorage.removeItem("token");
         dispatch(userActions.getLogout(null));
     }
 }
 
 export const updateUser = (updateUser) => async(dispatch)=>{
     try{
-    dispatch(userActions.getUpdateUserRequest());
-    const response = await axiosInstance.patch("/v1/rent/user/updateMe", updateUser);
-    console.log(response)
-    const {data} = await axiosInstance.get("/v1/rent/user/me")
-    dispatch(userActions.getCurrentUser(data.user));
+        dispatch(userActions.getUpdateUserRequest());
+        const response = await axiosInstance.patch("/v1/rent/user/updateMe", updateUser);
+        console.log(response)
+        const {data} = await axiosInstance.get("/v1/rent/user/me")
+        dispatch(userActions.getCurrentUser(data.user));
     }catch(error){
-       dispatch(userActions.getError(error.response.data.message))
+        dispatch(userActions.getError(error.response.data.message))
     }
 }
 
 export const forgotPassword =(email) => async(dispatch)=>{
-  try{
-    await axiosInstance.post("/v1/rent/user/forgotPassword",{email})
-  }catch(error){
-     dispatch(userActions.getError(error.response.data.message))
-  }
+    try{
+        await axiosInstance.post("/v1/rent/user/forgotPassword",{email})
+    }catch(error){
+        dispatch(userActions.getError(error.response.data.message))
+    }
 }
 
 export const resetPassword = (repassword, token) => async(dispatch)=>{
     try{
-           await axiosInstance.patch(`/v1/rent/user/resetPassword/${token}`, repassword)
+        await axiosInstance.patch(`/v1/rent/user/resetPassword/${token}`, repassword)
     }catch(error){
-       dispatch(userActions.getError(error.response.data.message))
+        dispatch(userActions.getError(error.response.data.message))
     }
 }
 
@@ -65,18 +78,19 @@ export const updatePassword =(passwords) => async (dispatch)=>{
     try{
         dispatch(userActions.getPasswordRequest());
         await axiosInstance.patch("/v1/rent/user/updateMyPassword",passwords)
-         dispatch(userActions.getPasswordSuccess(true))
+        dispatch(userActions.getPasswordSuccess(true))
     }catch(error){
-         dispatch(userActions.getError(error.response.data.message))
+        dispatch(userActions.getError(error.response.data.message))
     }
 }
 
 export const logout =()=> async(dispatch)=>{
     try{
-     await axiosInstance.get("/v1/rent/user/logout")
-     dispatch(userActions.getLogout(null))
+        await axiosInstance.get("/v1/rent/user/logout");
+        localStorage.removeItem("token");
+        dispatch(userActions.getLogout(null))
     }catch(error){
-         dispatch(userActions.getError(error.response.data.message))
+        localStorage.removeItem("token");
+        dispatch(userActions.getError(error.response.data.message))
     }
 };
-
